@@ -19,43 +19,43 @@ dmup(){
 }
 
 dmenv(){
-  dm env ${MACHINE_NAME}
+  dm env ${MACHINE_NAME} | grep '^export'
 }
 
 up() {
   dmup
-  # Use $(up) to initialize docker env
+  # Use eval $(up) to initialize docker env
   echo $(dmenv)
 }
 
 killz(){
-	$(dmenv)
+	eval $(dmenv)
 	echo "Killing hfactory docker containers:"
 	echo $IDS | xargs -n 1 docker kill
 	echo $IDS | xargs -n 1 docker rm
 }
 
 stop(){
-	$(dmenv)
+	eval $(dmenv)
 	echo "Stopping hfactory docker containers:"
 	echo $IDS | xargs -n 1 docker stop
 	echo $IDS | xargs -n 1 docker rm
 }
 
 serverlog(){
-	$(dmenv)
+	eval $(dmenv)
 	echo "Show Server logs"
 	docker logs -f server
 }
 
 hbaselog(){
-	$(dmenv)
+	eval $(dmenv)
 	echo "Show HBase logs"
 	docker logs -f hbase
 }
 
 start(){
-	$(up)
+	eval $(up)
 	homedir=$(dm ssh $MACHINE_NAME pwd)
 	if [ ${PERSISTS:-false} = "true" ]
 		then
@@ -81,7 +81,7 @@ start(){
 }
 
 update(){
-	$(dmenv)
+	eval $(dmenv)
 	echo $IDS | awk -v RS=' ' -v FS='\n' '{ print "hfactory/" $1 ":latest"}' | xargs -n 1 docker pull
 }
 
@@ -97,7 +97,7 @@ copyPath(){
 case "$1" in
 	init)
 		dm create --driver virtualbox $MACHINE_NAME || echo "Already exists"
-		$(up)
+		eval $(up)
 		update
 		dm ssh $MACHINE_NAME mkdir share data apps conf
 		ip=$(dmip)
@@ -157,7 +157,7 @@ case "$1" in
 		dm ssh
 		;;
 	status)
-		$(dmenv)
+		eval $(dmenv)
 		docker ps
 		;;
 	*)
