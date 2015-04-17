@@ -82,7 +82,6 @@ start(){
 
 update(){
 	$(dmenv)
-	git pull
 	echo $IDS | awk -v RS=' ' -v FS='\n' '{ print "hfactory/" $1 ":latest"}' | xargs -n 1 docker pull
 }
 

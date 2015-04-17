@@ -34,7 +34,7 @@ To start the containers simply use ```hfactory-env.sh start```
 
 The hbase container is launched in host-only mode and you can connect to it directly using hfactoryserver for the hbase.zookeeper.quorum property
 
-The hfactoryserver container is launched to listen on port 80 and you can connect to it directly using ihttp://hfactoryserver
+The hfactoryserver container is launched to listen on port 80 and you can connect to it directly using http://hfactoryserver
 
 To stop the docker containers use ```hfactory-env.sh stop```
 
