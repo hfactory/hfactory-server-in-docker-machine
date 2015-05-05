@@ -24,38 +24,38 @@ dmenv(){
 
 up() {
   dmup
-  # Use eval $(up) to initialize docker env
+  # Use eval "$(up)" to initialize docker env
   echo $(dmenv)
 }
 
 killz(){
-	eval $(dmenv)
+	eval "$(dmenv)"
 	echo "Killing hfactory docker containers:"
 	echo $IDS | xargs -n 1 docker kill
 	echo $IDS | xargs -n 1 docker rm
 }
 
 stop(){
-	eval $(dmenv)
+	eval "$(dmenv)"
 	echo "Stopping hfactory docker containers:"
 	echo $IDS | xargs -n 1 docker stop
 	echo $IDS | xargs -n 1 docker rm
 }
 
 serverlog(){
-	eval $(dmenv)
+	eval "$(dmenv)"
 	echo "Show Server logs"
 	docker logs -f server
 }
 
 hbaselog(){
-	eval $(dmenv)
+	eval "$(dmenv)"
 	echo "Show HBase logs"
 	docker logs -f hbase
 }
 
 start(){
-	eval $(up)
+	eval "$(up)"
 	homedir=$(dm ssh $MACHINE_NAME pwd)
 	if [ ${PERSISTS:-false} = "true" ]
 		then
@@ -81,7 +81,7 @@ start(){
 }
 
 update(){
-	eval $(dmenv)
+	eval "$(dmenv)"
 	echo $IDS | awk -v RS=' ' -v FS='\n' '{ print "hfactory/" $1 ":latest"}' | xargs -n 1 docker pull
 }
 
@@ -97,9 +97,9 @@ copyPath(){
 case "$1" in
 	init)
 		dm create --driver virtualbox $MACHINE_NAME || echo "Already exists"
-		eval $(up)
+		eval "$(up)"
 		update
-		dm ssh $MACHINE_NAME mkdir share data apps conf
+		dm ssh $MACHINE_NAME "mkdir share data apps conf"
 		ip=$(dmip)
 		echo "Update /etc/hosts with the following line:"
 		echo "$ip	hfactoryserver"
@@ -107,16 +107,18 @@ case "$1" in
 		echo "Use $0 putApp appFolder to add an application and $0 removeApp appName to remove it"
 		;;
 	putApp)
-		if [ -z "$2" ]
+		if [ -d "$2" ]
 			then
-				dm ssh $MACHINE_NAME rm -rf /apps/$2
+				appName=$(basename $2)
+				dm ssh $MACHINE_NAME "rm -rf /apps/$appName"
 				copyPath $2 apps
 		fi
 		;;
 	removeApp)
-		if [ -z "$2" ]
+		if [ -d "$2" ]
 			then
-				dm ssh $MACHINE_NAME rm -rf /apps/$2
+				appName=$(basename $2)
+				dm ssh $MACHINE_NAME "rm -rf /apps/$appName"
 		fi
 		;;
 #	updateConf)
@@ -157,11 +159,11 @@ case "$1" in
 		dm ssh
 		;;
 	status)
-		eval $(dmenv)
+		eval "$(dmenv)"
 		docker ps
 		;;
 	*)
-		echo "Usage: $0 {start|stop|hbaselog|serverlog|kill|update|upgrade|restart|status|up|shutdown|ssh}"
+		echo "Usage: $0 {init|start|stop|hbaselog|serverlog|kill|update|upgrade|restart|status|up|shutdown|ssh}"
 		echo "Also:  $0 putApp appFolder"
 		echo "       $0 removeApp appName"
 		RETVAL=1
