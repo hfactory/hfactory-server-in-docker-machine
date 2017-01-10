@@ -7,7 +7,7 @@ MACHINE_NAME=hfactoryserver
 #USE_CONFDIR="-v ${homedir}/conf:/conf"
 
 dm(){
-	docker-machine $@
+	docker-machine "$@"
 }
 
 dmip(){
@@ -110,7 +110,7 @@ case "$1" in
 		if [ -d "$2" ]
 			then
 				appName=$(basename $2)
-				dm ssh $MACHINE_NAME "rm -rf /apps/$appName"
+				dm ssh $MACHINE_NAME "rm -rf apps/$appName"
 				copyPath $2 apps
 		fi
 		;;
@@ -118,7 +118,7 @@ case "$1" in
 		if [ -d "$2" ]
 			then
 				appName=$(basename $2)
-				dm ssh $MACHINE_NAME "rm -rf /apps/$appName"
+				dm ssh $MACHINE_NAME "rm -rf apps/$appName"
 		fi
 		;;
 #	updateConf)
