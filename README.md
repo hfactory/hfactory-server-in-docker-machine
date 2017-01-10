@@ -1,11 +1,12 @@
-# hfactory-server-in-docker-machine
+# README
 
-A hbase standalone docker and a hfactory inside a hfactoryserver docker machine.
+The [hfactory-server-in-docker-machine](https://github.com/hfactory/hfactory-server-in-docker-machine) github project packages all the utilities necessary for a simple installation of HFactory Server via Docker. The image contains both an HBase standalone Docker and a HFactory Server inside a hfactoryserver Docker machine.
 
-Restarting the containers allows you to start again with an empty hbase server.
+Restarting the containers allows you to start again with an empty HBase server.
 
 ## Prerequisites
-To use this container, you need to have VirtualBox and docker-machine installed.
+
+To use the container, you need to have VirtualBox and Docker-machine installed.
 
 ### VirtualBox
 
@@ -18,11 +19,9 @@ In order to install docker-machine, go to : http://docs.docker.com/machine/#inst
 - Download the last version
 - Put the command in the path
 
-That is all
+## Using the HFactory server in docker machine
 
-## Using the hfactory server in docker machine
-
-For ease of use you can put the bin folder in your path
+For ease of use you can put the bin folder in your path.
 
 ### First initialization
 

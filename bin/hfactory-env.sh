@@ -35,6 +35,13 @@ killz(){
 	echo $IDS | xargs -n 1 docker rm
 }
 
+stopHBase(){
+	eval "$(dmenv)"
+	echo "Stopping hbase docker container:"
+	docker stop hbase
+	docker rm hbase
+}
+
 stop(){
 	eval "$(dmenv)"
 	echo "Stopping hfactory docker containers:"
@@ -54,7 +61,7 @@ hbaselog(){
 	docker logs -f hbase
 }
 
-start(){
+startHBase(){
 	eval "$(up)"
 	homedir=$(dm ssh $MACHINE_NAME pwd)
 	if [ ${PERSISTS:-false} = "true" ]
@@ -70,6 +77,10 @@ start(){
 		--net host \
 		hfactory/hbase)
 	echo "Started hbase in container $STANDALONEHBASE"
+}
+
+start(){
+	startHBase
 	HFACTORY_SERVER=$(docker run \
 		-d \
 		-v ${homedir}/apps:/apps \
@@ -134,8 +145,14 @@ case "$1" in
 		stop
 		start
 		;;
+	startHBase)
+		startHBase
+		;;
 	start)
 		start
+		;;
+	stopHBase)
+		stopHBase
 		;;
 	stop)
 		stop
@@ -156,14 +173,14 @@ case "$1" in
 		update
 		;;
 	ssh)
-		dm ssh
+		dm ssh $MACHINE_NAME
 		;;
 	status)
 		eval "$(dmenv)"
 		docker ps
 		;;
 	*)
-		echo "Usage: $0 {init|start|stop|hbaselog|serverlog|kill|update|upgrade|restart|status|up|shutdown|ssh}"
+		echo "Usage: $0 {init|start|startHBase|stop|hbaselog|serverlog|kill|update|upgrade|restart|status|up|shutdown|ssh}"
 		echo "Also:  $0 putApp appFolder"
 		echo "       $0 removeApp appName"
 		RETVAL=1
